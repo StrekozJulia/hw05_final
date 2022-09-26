@@ -253,7 +253,7 @@ class PostViewsTests(TestCase):
             'index_response': self.authorized_client.get(
                 reverse('posts:index')),
             'group_response': self.authorized_client.get(
-                reverse('posts:group_posts', 
+                reverse('posts:group_posts',
                         kwargs={'slug': PostViewsTests.group2.slug})),
             'profile_response': self.authorized_client.get(
                 reverse('posts:profile',
