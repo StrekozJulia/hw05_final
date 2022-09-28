@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, User, Follow
-from .cached_paginator import create_page, create_page_not_cached
+from .utils import create_page, create_page_not_cached
 from posts.forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 
@@ -45,9 +45,9 @@ def profile(request, username):
                            request.GET.get('page'),
                            POSTS_ON_PAGE,
                            f'profile_page_{username}')
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(user=request.user,
-                                          author=user).exists()
+    following = (request.user.is_authenticated
+                 and Follow.objects.filter(user=request.user,
+                                           author=user).exists())
     context = {
         'username': user,
         'page_obj': page_obj,
@@ -61,9 +61,10 @@ def post_detail(request, post_id: int):
     template = 'posts/post_detail.html'
     post = Post.objects.get(pk=post_id)
     comments = post.comments.all()
+    form = CommentForm()
     context = {
         'post': post,
-        'form': CommentForm(),
+        'form': form,
         'comments': comments,
     }
     return render(request, template, context)
